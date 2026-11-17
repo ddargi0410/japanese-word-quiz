@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>일본어 동사 100</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: one narrow study column — settings strip, a single word card, four answer tiles, progress below */
+:root{
+  --bg:#eef1f6; --paper:#ffffff; --ink:#1c2433; --muted:#5d6779; --line:#d6dce7;
+  --ai:#2f4b9a; --ai-soft:#e3e9f7; --good:#1f8a5b; --good-soft:#dcf3e8; --bad:#c2413a; --bad-soft:#fbe4e2;
+  --jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --kr:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121722; --paper:#1b2230; --ink:#e7ebf3; --muted:#9aa4b6; --line:#2e3748;
+  --ai:#8ea6f0; --ai-soft:#24304c; --good:#5fd09a; --good-soft:#173a2b; --bad:#f08a83; --bad-soft:#41201f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121722; --paper:#1b2230; --ink:#e7ebf3; --muted:#9aa4b6; --line:#2e3748;
+  --ai:#8ea6f0; --ai-soft:#24304c; --good:#5fd09a; --good-soft:#173a2b; --bad:#f08a83; --bad-soft:#41201f; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--kr);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--jp);font-weight:900;font-size:1.5rem;margin:0;letter-spacing:.02em;text-wrap:balance}
+h1 small{font-family:var(--kr);font-weight:500;font-size:.85rem;color:var(--muted);margin-left:6px}
+.score{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:500}
+.score b{color:var(--ink)}
+.settings{display:flex;flex-direction:column;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.row .lab{font-size:.78rem;color:var(--muted);letter-spacing:.04em;min-width:52px}
+.chip{font:inherit;font-size:.88rem;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip small{color:var(--muted);font-size:.75rem;margin-left:3px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--ai);border-color:var(--ai);color:var(--paper);font-weight:700}
+.chip[aria-pressed="true"] small{color:var(--paper);opacity:.8}
+.chip:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--ai);outline-offset:2px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:28px 20px 22px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+.qno{font-size:.78rem;color:var(--muted);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.tag{font-size:.72rem;color:var(--ai);background:var(--ai-soft);border-radius:6px;padding:2px 8px;font-weight:700}
+.word{font-family:var(--jp);font-weight:700;font-size:2.6rem;line-height:1.2;overflow-wrap:anywhere}
+.word.kr{font-family:var(--kr);font-size:2rem}
+.reading{font-family:var(--jp);color:var(--muted);font-size:1.05rem;min-height:1.6em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.opts{grid-template-columns:1fr}}
+.opt{font:inherit;text-align:left;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;display:flex;gap:10px;align-items:center;min-height:60px}
+.opt .k{font-size:.72rem;color:var(--muted);border:1px solid var(--line);border-radius:6px;width:22px;height:22px;display:grid;place-items:center;flex:none}
+.opt .t{min-width:0;font-weight:500}
+.opt .t.jp{font-family:var(--jp);font-size:1.15rem}
+.opt .t small{display:block;font-family:var(--jp);color:var(--muted);font-size:.8rem;font-weight:500}
+.opt:hover:not(:disabled){border-color:var(--ai)}
+.opt.ok{background:var(--good-soft);border-color:var(--good)}
+.opt.no{background:var(--bad-soft);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.feedback{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.verdict{font-weight:700}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--bad)}
+.forms{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.92rem;margin:0}
+.forms dt{color:var(--muted);font-size:.8rem;padding-top:2px}
+.forms dd{margin:0;font-family:var(--jp);font-weight:500;min-width:0}
+.forms dd span{color:var(--muted);font-weight:400;margin-left:6px;font-size:.85rem;font-family:var(--kr)}
+.forms dd span.jpr{font-family:var(--jp)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;border-radius:10px;padding:11px 18px;cursor:pointer;border:1.5px solid var(--ai);background:var(--ai);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--ai)}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ai);transition:width .3s}
+.done{text-align:center;gap:12px}
+.big{font-family:var(--jp);font-weight:900;font-size:3rem;font-variant-numeric:tabular-nums;line-height:1}
+.miss{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.miss span{font-family:var(--jp);background:var(--bad-soft);color:var(--ink);border-radius:8px;padding:4px 10px;font-size:.9rem}
+.hint{font-size:.8rem;color:var(--muted);text-align:center}
+.say{font:inherit;border:1px solid var(--line);background:var(--ai-soft);color:var(--ai);border-radius:999px;width:40px;height:40px;cursor:pointer;display:inline-grid;place-items:center;flex:none;padding:0}
+.say.sm{width:28px;height:28px}
+.say:hover{border-color:var(--ai)}
+.say:focus-visible{outline:3px solid var(--ai);outline-offset:2px}
+.forms dd{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.forms dd span{margin-left:0}
+.nosound{font-size:.78rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>単語クイズ<small>일본어 단어 퀴즈</small></h1>
+    <div class="score" id="score">맞힘 <b>0</b> / 0</div>
+  </header>
+
+  <section class="settings" aria-label="퀴즈 설정">
+    <div class="row"><span class="lab">종류</span>
+      <button class="chip" id="cat-v" data-cat="v" aria-pressed="true">동사<small></small></button>
+      <button class="chip" id="cat-n" data-cat="n" aria-pressed="false">명사<small></small></button>
+      <button class="chip" id="cat-p" data-cat="p" aria-pressed="false">조사<small></small></button>
+      <button class="chip" id="cat-a" data-cat="a" aria-pressed="false">부사<small></small></button>
+      <button class="chip" id="cat-all" data-cat="all" aria-pressed="false">전체<small></small></button>
+    </div>
+    <div class="row"><span class="lab">방향</span>
+      <button class="chip" id="mode-jp" data-mode="jp" aria-pressed="true">일본어 → 뜻</button>
+      <button class="chip" id="mode-kr" data-mode="kr" aria-pressed="false">뜻 → 일본어</button>
+    </div>
+    <div class="row"><span class="lab">문제 수</span>
+      <button class="chip" id="n10" data-n="10" aria-pressed="true">10</button>
+      <button class="chip" id="n20" data-n="20" aria-pressed="false">20</button>
+      <button class="chip" id="n50" data-n="50" aria-pressed="false">50</button>
+      <button class="chip" id="nall" data-n="999" aria-pressed="false">전부</button>
+    </div>
+    <div class="row"><span class="lab">읽는 법</span>
+      <button class="chip" id="furi" aria-pressed="true">보이기</button>
+    </div>
+    <div class="row"><span class="lab">소리</span>
+      <button class="chip" id="auto" aria-pressed="true">자동 재생</button>
+      <button class="chip" id="slow" aria-pressed="false">천천히</button>
+      <span class="nosound" id="nosound" hidden>이 브라우저는 발음 재생을 지원하지 않아요</span>
+    </div>
+  </section>
+
+  <div class="bar" aria-hidden="true"><i id="prog" style="width:0%"></i></div>
+  <main id="stage"></main>
+  <p class="hint">키보드: 1–4로 고르고, Enter로 다음 문제</p>
+</div>
+
+<script>
+// 동사: [사전형, 읽기, ます형, ます형 읽기, 뜻]
+const VERBS=[
+["食べる","たべる","食べます","たべます","먹다"],["飲む","のむ","飲みます","のみます","마시다"],
+["行く","いく","行きます","いきます","가다"],["来る","くる","来ます","きます","오다"],
+["帰る","かえる","帰ります","かえります","돌아가다"],["見る","みる","見ます","みます","보다"],
+["聞く","きく","聞きます","ききます","듣다, 묻다"],["話す","はなす","話します","はなします","이야기하다"],
+["言う","いう","言います","いいます","말하다"],["読む","よむ","読みます","よみます","읽다"],
+["書く","かく","書きます","かきます","쓰다"],["寝る","ねる","寝ます","ねます","자다"],
+["起きる","おきる","起きます","おきます","일어나다"],["休む","やすむ","休みます","やすみます","쉬다"],
+["働く","はたらく","働きます","はたらきます","일하다"],["買う","かう","買います","かいます","사다"],
+["売る","うる","売ります","うります","팔다"],["会う","あう","会います","あいます","만나다"],
+["待つ","まつ","待ちます","まちます","기다리다"],["作る","つくる","作ります","つくります","만들다"],
+["使う","つかう","使います","つかいます","사용하다"],["する","する","します","します","하다"],
+["勉強する","べんきょうする","勉強します","べんきょうします","공부하다"],["洗う","あらう","洗います","あらいます","씻다"],
+["遊ぶ","あそぶ","遊びます","あそびます","놀다"],["歩く","あるく","歩きます","あるきます","걷다"],
+["走る","はしる","走ります","はしります","달리다"],["泳ぐ","およぐ","泳ぎます","およぎます","수영하다"],
+["乗る","のる","乗ります","のります","타다"],["降りる","おりる","降ります","おります","내리다"],
+["入る","はいる","入ります","はいります","들어가다"],["出る","でる","出ます","でます","나가다"],
+["開ける","あける","開けます","あけます","열다"],["閉める","しめる","閉めます","しめます","닫다"],
+["始める","はじめる","始めます","はじめます","시작하다"],["終わる","おわる","終わります","おわります","끝나다"],
+["教える","おしえる","教えます","おしえます","가르치다"],["習う","ならう","習います","ならいます","배우다"],
+["覚える","おぼえる","覚えます","おぼえます","외우다"],["忘れる","わすれる","忘れます","わすれます","잊다"],
+["知る","しる","知ります","しります","알다"],["分かる","わかる","分かります","わかります","이해하다"],
+["思う","おもう","思います","おもいます","생각하다"],["考える","かんがえる","考えます","かんがえます","궁리하다, 고민하다"],
+["住む","すむ","住みます","すみます","살다(거주)"],["持つ","もつ","持ちます","もちます","들다, 가지다"],
+["取る","とる","取ります","とります","집다, 잡다"],["置く","おく","置きます","おきます","놓다, 두다"],
+["送る","おくる","送ります","おくります","보내다"],["もらう","もらう","もらいます","もらいます","받다"],
+["あげる","あげる","あげます","あげます","주다"],["貸す","かす","貸します","かします","빌려주다"],
+["借りる","かりる","借ります","かります","빌리다"],["返す","かえす","返します","かえします","돌려주다"],
+["呼ぶ","よぶ","呼びます","よびます","부르다"],["歌う","うたう","歌います","うたいます","노래하다"],
+["弾く","ひく","弾きます","ひきます","(악기를) 치다"],["撮る","とる","撮ります","とります","(사진을) 찍다"],
+["着る","きる","着ます","きます","(옷을) 입다"],["脱ぐ","ぬぐ","脱ぎます","ぬぎます","벗다"],
+["履く","はく","履きます","はきます","(신발을) 신다"],["立つ","たつ","立ちます","たちます","서다"],
+["座る","すわる","座ります","すわります","앉다"],["笑う","わらう","笑います","わらいます","웃다"],
+["泣く","なく","泣きます","なきます","울다"],["怒る","おこる","怒ります","おこります","화내다"],
+["困る","こまる","困ります","こまります","곤란하다"],["疲れる","つかれる","疲れます","つかれます","지치다, 피곤하다"],
+["急ぐ","いそぐ","急ぎます","いそぎます","서두르다"],["止まる","とまる","止まります","とまります","멈추다"],
+["切る","きる","切ります","きります","자르다"],["押す","おす","押します","おします","누르다"],
+["引く","ひく","引きます","ひきます","당기다"],["消す","けす","消します","けします","끄다, 지우다"],
+["つける","つける","つけます","つけます","켜다"],["掃除する","そうじする","掃除します","そうじします","청소하다"],
+["洗濯する","せんたくする","洗濯します","せんたくします","빨래하다"],["料理する","りょうりする","料理します","りょうりします","요리하다"],
+["運転する","うんてんする","運転します","うんてんします","운전하다"],["散歩する","さんぽする","散歩します","さんぽします","산책하다"],
+["旅行する","りょこうする","旅行します","りょこうします","여행하다"],["練習する","れんしゅうする","練習します","れんしゅうします","연습하다"],
+["電話する","でんわする","電話します","でんわします","전화하다"],["結婚する","けっこんする","結婚します","けっこんします","결혼하다"],
+["生まれる","うまれる","生まれます","うまれます","태어나다"],["なる","なる","なります","なります","되다"],
+["ある","ある","あります","あります","(물건이) 있다"],["いる","いる","います","います","(사람·동물이) 있다"],
+["できる","できる","できます","できます","할 수 있다"],["見せる","みせる","見せます","みせます","보여 주다"],
+["探す","さがす","探します","さがします","찾다"],["選ぶ","えらぶ","選びます","えらびます","고르다"],
+["決める","きめる","決めます","きめます","정하다"],["手伝う","てつだう","手伝います","てつだいます","돕다"],
+["頑張る","がんばる","頑張ります","がんばります","힘내다, 노력하다"],["浴びる","あびる","浴びます","あびます","(샤워를) 하다"],
+["磨く","みがく","磨きます","みがきます","(이를) 닦다"],["心配する","しんぱいする","心配します","しんぱいします","걱정하다"],
+["払う","はらう","払います","はらいます","지불하다"],["降る","ふる","降ります","ふります","(비·눈이) 내리다"]
+];
+// 명사: [단어, 읽기, 뜻]
+const NOUNS=[
+["学校","がっこう","학교"],["先生","せんせい","선생님"],["学生","がくせい","학생"],["家","いえ","집"],
+["部屋","へや","방"],["机","つくえ","책상"],["椅子","いす","의자"],["本","ほん","책"],
+["水","みず","물"],["お茶","おちゃ","차(마시는 차)"],["牛乳","ぎゅうにゅう","우유"],["豆乳","とうにゅう","두유"],
+["パン","パン","빵"],["ご飯","ごはん","밥"],["肉","にく","고기"],["魚","さかな","생선"],
+["野菜","やさい","채소"],["果物","くだもの","과일"],["朝","あさ","아침"],["昼","ひる","낮, 점심"],
+["夜","よる","밤"],["今日","きょう","오늘"],["明日","あした","내일"],["昨日","きのう","어제"],
+["週末","しゅうまつ","주말"],["時間","じかん","시간"],["天気","てんき","날씨"],["雨","あめ","비"],
+["雪","ゆき","눈(내리는 눈)"],["友達","ともだち","친구"],["家族","かぞく","가족"],["母","はは","(나의) 엄마"],
+["父","ちち","(나의) 아빠"],["娘","むすめ","딸"],["夫","おっと","남편"],["猫","ねこ","고양이"],
+["犬","いぬ","개"],["車","くるま","자동차"],["電車","でんしゃ","전철"],["駅","えき","역"],
+["店","みせ","가게"],["病院","びょういん","병원"],["仕事","しごと","일, 업무"],["会社","かいしゃ","회사"],
+["映画","えいが","영화"],["音楽","おんがく","음악"],["写真","しゃしん","사진"],["お金","おかね","돈"],
+["電話","でんわ","전화"],["誕生日","たんじょうび","생일"],["旅行","りょこう","여행"],["宿題","しゅくだい","숙제"],
+["体","からだ","몸"],["頭","あたま","머리"],["お腹","おなか","배(신체)"],["薬","くすり","약"],
+["人形","にんぎょう","인형"],["甘いもの","あまいもの","단것"],["窓","まど","창문"],["服","ふく","옷"]
+];
+// 조사: [조사, 읽기, 뜻, 예문, 예문 뜻]
+const PARTS=[
+["は","わ","~은/는 (주제)","私は先生です。","나는 선생님이에요."],
+["が","が","~이/가","雨が降ります。","비가 내려요."],
+["を","お","~을/를","水を飲みます。","물을 마셔요."],
+["に","に","~에 (시간·도착점)","7時に起きます。","7시에 일어나요."],
+["へ","え","~(으)로 (방향)","学校へ行きます。","학교로 가요."],
+["で","で","~에서 (장소), ~로 (수단)","駅で待ちます。","역에서 기다려요."],
+["と","と","~와/과, ~랑","友達と遊びます。","친구랑 놀아요."],
+["も","も","~도","私も行きます。","나도 가요."],
+["の","の","~의","母の誕生日","엄마의 생일"],
+["から","から","~부터, ~에서 (출발점)","9時から始まります。","9시부터 시작해요."],
+["まで","まで","~까지","5時まで働きます。","5시까지 일해요."],
+["や","や","~랑 (여러 개 중 몇 개 나열)","パンや牛乳を買います。","빵이랑 우유 (등을) 사요."],
+["より","より","~보다","犬より猫が好きです。","개보다 고양이가 좋아요."],
+["か","か","~까? (의문)","行きますか。","가요?"],
+["ね","ね","~네요, ~죠 (맞장구)","寒いですね。","춥네요."],
+["よ","よ","~요 (알려 줄 때)","もう言いましたよ。","벌써 말했어요."]
+];
+// 부사: [부사, 읽기, 뜻, 예문, 예문 뜻]
+const ADVS=[
+["とても","とても","매우, 아주","とても寒いです。","아주 추워요."],
+["少し","すこし","조금, 약간","少し休みます。","조금 쉬어요."],
+["ちょっと","ちょっと","잠깐, 좀","ちょっと待ってください。","잠깐 기다려 주세요."],
+["たくさん","たくさん","많이","たくさん食べます。","많이 먹어요."],
+["よく","よく","자주, 잘","よく映画を見ます。","자주 영화를 봐요."],
+["いつも","いつも","항상, 늘","いつも忙しいです。","항상 바빠요."],
+["時々","ときどき","가끔","時々走ります。","가끔 달려요."],
+["たまに","たまに","어쩌다, 이따금","たまに料理します。","어쩌다 요리해요."],
+["あまり","あまり","별로 (+부정)","あまり好きじゃないです。","별로 안 좋아해요."],
+["全然","ぜんぜん","전혀 (+부정)","全然分かりません。","전혀 모르겠어요."],
+["もう","もう","벌써, 이미","もう寝ます。","이제 잘게요."],
+["まだ","まだ","아직","まだ始めていません。","아직 시작 안 했어요."],
+["すぐ","すぐ","곧, 바로","すぐ行きます。","바로 갈게요."],
+["ゆっくり","ゆっくり","천천히, 푹","ゆっくり休んでください。","푹 쉬세요."],
+["もっと","もっと","더","もっと食べたいです。","더 먹고 싶어요."],
+["一緒に","いっしょに","함께, 같이","一緒に行きましょう。","같이 가요."],
+["一番","いちばん","가장, 제일","これが一番好きです。","이게 제일 좋아요."],
+["本当に","ほんとうに","정말로","本当に疲れました。","정말 피곤해요."],
+["やっぱり","やっぱり","역시","やっぱり忙しいです。","역시 바빠요."],
+["たぶん","たぶん","아마","たぶん雨が降ります。","아마 비가 올 거예요."],
+["きっと","きっと","분명히, 꼭","きっと大丈夫です。","분명 괜찮을 거예요."],
+["ずっと","ずっと","계속, 훨씬","ずっと待っていました。","계속 기다렸어요."],
+["また","また","또, 다시","また会いましょう。","또 만나요."],
+["先に","さきに","먼저","先に帰ります。","먼저 갈게요."],
+["早く","はやく","빨리, 일찍","早く寝ます。","일찍 자요."],
+["全部","ぜんぶ","전부, 다","全部食べました。","다 먹었어요."],
+["だいたい","だいたい","대체로, 대략","だいたい分かります。","대충 알아요."],
+["ちょうど","ちょうど","딱, 마침","ちょうど12時です。","딱 12시예요."],
+["なんだか","なんだか","왠지","なんだか眠いです。","왠지 졸려요."],
+["特に","とくに","특히","特に猫が好きです。","특히 고양이를 좋아해요."],
+["ほとんど","ほとんど","거의","ほとんど終わりました。","거의 끝났어요."]
+];
+const CAT={v:"동사",n:"명사",p:"조사",a:"부사"};
+const ALL=[
+  ...VERBS.map(x=>({c:"v",w:x[0],r:x[1],m:x[4],ms:x[2],msr:x[3]})),
+  ...NOUNS.map(x=>({c:"n",w:x[0],r:x[1],m:x[2]})),
+  ...PARTS.map(x=>({c:"p",w:x[0],r:x[1],m:x[2],ex:x[3],exm:x[4]})),
+  ...ADVS.map(x=>({c:"a",w:x[0],r:x[1],m:x[2],ex:x[3],exm:x[4]}))
+];
+const toNeg=m=>m.replace(/ます$/,"ません");
+let cat="v",mode="jp",N=10,furi=true,deck=[],i=0,right=0,missed=[],answered=false,cur=null;
+// 발음: 브라우저 내장 음성(Web Speech API), 일본어 목소리 우선
+let auto=true,slow=false,jaVoice=null;
+const synth=("speechSynthesis" in window)?window.speechSynthesis:null;
+function pickVoice(){if(!synth)return;const vs=synth.getVoices();
+  jaVoice=vs.find(v=>/^ja/i.test(v.lang)&&/google|kyoko|haruka|nanami/i.test(v.name))||vs.find(v=>/^ja/i.test(v.lang))||null}
+if(synth){pickVoice();synth.addEventListener?.("voiceschanged",pickVoice)}
+function say(t){if(!synth||!t)return;try{synth.cancel();const u=new SpeechSynthesisUtterance(t);
+  u.lang="ja-JP";if(jaVoice)u.voice=jaVoice;u.rate=slow?0.6:0.9;synth.speak(u)}catch(e){}}
+const SPK=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>`;
+const sayBtn=(t,sm)=>synth?`<button class="say${sm?" sm":""}" data-say="${t}" aria-label="발음 듣기">${SPK}</button>`:"";
+if(!synth)document.getElementById("nosound").hidden=false;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-say]");if(b)say(b.dataset.say)});
+const $=s=>document.querySelector(s), stage=$("#stage");
+const shuffle=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+const pool=()=>cat==="all"?ALL:ALL.filter(x=>x.c===cat);
+const showR=x=>furi&&x.r!==x.w;
+
+document.querySelectorAll("[data-cat]").forEach(b=>{const c=b.dataset.cat;
+  b.querySelector("small").textContent=c==="all"?ALL.length:ALL.filter(x=>x.c===c).length});
+
+function start(list){
+  deck=list?shuffle(list):shuffle(pool()).slice(0,N);
+  i=0;right=0;missed=[];render();
+}
+function render(){
+  answered=false;
+  $("#score").innerHTML=`맞힘 <b>${right}</b> / ${i}`;
+  $("#prog").style.width=(i/deck.length*100)+"%";
+  if(i>=deck.length) return finish();
+  cur=deck[i];
+  const same=ALL.filter(x=>x.c===cur.c&&x!==cur&&x.m!==cur.m&&x.w!==cur.w);
+  const opts=shuffle([cur,...shuffle(same).slice(0,3)]);
+  const tag=`<span class="tag">${CAT[cur.c]}</span>`;
+  const q=mode==="jp"
+    ? `<div class="word">${cur.w}</div><div class="reading">${showR(cur)?cur.r:""}</div>${sayBtn(cur.r)}`
+    : `<div class="word kr">${cur.m}</div><div class="reading"></div>`;
+  stage.innerHTML=`<div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card"><div class="qno">${i+1} / ${deck.length}</div>${tag}${q}</div>
+    <div class="opts">${opts.map((o,k)=>`<button class="opt" id="opt${k}" data-k="${ALL.indexOf(o)}"><span class="k">${k+1}</span>${
+      mode==="jp"?`<span class="t">${o.m}</span>`:`<span class="t jp">${o.w}${showR(o)?`<small>${o.r}</small>`:""}</span>`}</button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  stage.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
+  if(auto&&mode==="jp")say(cur.r);
+}
+function detail(x){
+  let h=`<dt>${CAT[x.c]}</dt><dd>${sayBtn(x.r,1)}${x.w}<span class="jpr">${x.r!==x.w?x.r:""}</span><span>${x.m}</span></dd>`;
+  if(x.c==="v") h+=`<dt>~ます</dt><dd>${sayBtn(x.msr,1)}${x.ms}<span class="jpr">${x.msr}</span></dd><dt>~ません</dt><dd>${sayBtn(toNeg(x.msr),1)}${toNeg(x.ms)}<span class="jpr">${toNeg(x.msr)}</span></dd>`;
+  if(x.ex) h+=`<dt>예문</dt><dd>${sayBtn(x.ex,1)}${x.ex}<span>${x.exm}</span></dd>`;
+  if(x.c==="p"&&x.r!==x.w) h+=`<dt>주의</dt><dd><span style="margin:0">조사일 때는 「${x.r}」로 읽어요</span></dd>`;
+  return h;
+}
+function pick(b){
+  if(answered)return; answered=true;
+  const ok=ALL[+b.dataset.k]===cur;
+  if(ok)right++; else missed.push(cur);
+  stage.querySelectorAll(".opt").forEach(o=>{o.disabled=true;if(ALL[+o.dataset.k]===cur)o.classList.add("ok")});
+  if(!ok)b.classList.add("no");
+  i++;
+  $("#score").innerHTML=`맞힘 <b>${right}</b> / ${i}`;
+  $("#prog").style.width=(i/deck.length*100)+"%";
+  $("#fb").innerHTML=`<div class="feedback">
+    <div class="verdict ${ok?"ok":"no"}">${ok?"정답이에요!":"아쉬워요. 정답은 「"+cur.w+"」 "+cur.m}</div>
+    <dl class="forms">${detail(cur)}</dl>
+    <div class="actions"><button class="btn" id="next">${i>=deck.length?"결과 보기":"다음 문제"}</button></div></div>`;
+  const n=$("#next"); n.onclick=render; n.focus();
+  if(auto&&mode==="kr")say(cur.r);
+}
+function finish(){
+  const pct=Math.round(right/deck.length*100);
+  stage.innerHTML=`<div class="card done">
+    <div class="qno">결과</div>
+    <div class="big">${right}<span style="font-size:1.4rem;color:var(--muted)"> / ${deck.length}</span></div>
+    <div>${pct===100?"완벽해요! 全問正解 🎉":pct>=80?"아주 잘했어요!":pct>=50?"절반 넘게 맞혔어요. 조금만 더!":"틀린 단어부터 다시 해 봐요."}</div>
+    ${missed.length?`<div class="qno">틀린 단어</div><div class="miss">${missed.map(m=>`<span>${m.w} · ${m.m}</span>`).join("")}</div>`:""}
+    <div class="actions" style="justify-content:center">
+      ${missed.length?`<button class="btn" id="retry">틀린 것만 다시</button>`:""}
+      <button class="btn ${missed.length?"ghost":""}" id="again">새로 시작</button></div></div>`;
+  const r=$("#retry"); if(r)r.onclick=()=>start(missed.slice());
+  $("#again").onclick=()=>start();
+}
+const group=(sel,fn)=>document.querySelectorAll(sel).forEach(b=>b.onclick=()=>{fn(b);
+  document.querySelectorAll(sel).forEach(x=>x.setAttribute("aria-pressed",x===b));start()});
+group("[data-cat]",b=>cat=b.dataset.cat);
+group("[data-mode]",b=>mode=b.dataset.mode);
+group("[data-n]",b=>N=+b.dataset.n);
+$("#auto").onclick=e=>{auto=!auto;e.currentTarget.setAttribute("aria-pressed",auto)};
+$("#slow").onclick=e=>{slow=!slow;e.currentTarget.setAttribute("aria-pressed",slow);if(cur)say(cur.r)};
+$("#furi").onclick=e=>{furi=!furi;const t=e.currentTarget;t.setAttribute("aria-pressed",furi);t.textContent=furi?"보이기":"숨기기";if(!answered)render()};
+document.addEventListener("keydown",e=>{
+  if(/^[1-4]$/.test(e.key)&&!answered){const b=$("#opt"+(e.key-1));if(b)pick(b)}
+  else if(e.key==="Enter"&&answered){if($("#next")){e.preventDefault();render()}}
+});
+start();
+</script>
+
+</body>
+</html>
